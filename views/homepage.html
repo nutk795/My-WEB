@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation Room Dashboard</title>
+    <!-- font font-awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="/public/css/bootstrap.css">
+    <script src="/public/js/javascript-bundle.js"></script>
+    <!-- in page css -->
+    <link rel="stylesheet" href="/public/css/navbar_css.css">
+    <!-- Notiflix -->
+    <script src="/public/js/notiflix-aio-3.2.6.min.js"></script>
+     <!-- SweetAlert  -->
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div>
+                        <div class="text-end">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <h5 class="modal-title text-center" id="loginModalLabel">Login</h5>
+                    </div>
+
+                    <form id="formLogin">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" name="txtUsername" id="Username"
+                                placeholder="Enter Username" required>
+                            <label for="Username">Enter Username</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control password-field" name="txtPassword" id="password"
+                                placeholder="Password" required>
+                            <label for="password">Enter Password</label>
+                            <button type="button" class="btn btn-light password-toggle">
+                                <i class="fas fa-eye-slash"></i>
+                            </button>
+                        </div>
+                        <div class="container text-center">
+                            <p>Don't have an account? <a class="text-primary" data-bs-toggle="modal"
+                                    data-bs-target="#RegisterModal">Sign up</a></p>
+                            <a href="#" id="forgotPasswordLink">Forgot your password?</a>
+                        </div>
+                        <div class="container text-center mt-5">
+                            <button type="submit" id="loginBtn" class="btn btn-dark">Login</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal  -->
+    <div class="modal fade" id="RegisterModal" tabindex="-1" aria-labelledby="regModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div>
+                        <div class="text-end">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <h5 class="modal-title text-center" id="regModalLabel">Register</h5>
+                    </div>
+
+                    <form id="formReg">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="studentID" maxlength="10" minlength="10"
+                                pattern="[0-9]{10}" placeholder="studentID" title="Please fill 10 digit" required>
+                            <label for="studentID">Student ID</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="name" maxlength="30" placeholder="FullName"
+                                required>
+                            <label for="name">Full Name</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="RegUsername" minlength="5" maxlength="20"
+                                placeholder="Username" required>
+                            <label for="RegUsername">Username</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control password-field" id="RegPassword"
+                                placeholder="Password" minlength="8" maxlength="20" required>
+                            <label for="RegPassword">Password</label>
+                            <button type="button" class="btn btn-light password-toggle">
+                                <i class="fas fa-eye-slash"></i>
+                            </button>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control password-field" id="ConfirmPassword"
+                                placeholder="Confirm-Password" required>
+                            <label for="ConfirmPassword">Confirm Password</label>
+                            <button type="button" class="btn btn-light password-toggle">
+                                <i class="fas fa-eye-slash"></i>
+                            </button>
+                        </div>
+                        <div class="container text-center mt-5">
+                            <button type="submit" id="regBtn" class="btn btn-dark">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+    <!-- Image Header with Text Overlay -->
+    <div class="text-center"
+        style="position: relative; background-image: url('/public/img/head.png'); height: 18rem; background-position: center;">
+        <!-- Navigation Bar -->
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container">
+                <a class="navbar-brand" href="#"><b>RESERVATION ROOM</b></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link fs-5 fw-bold" href="/">Home</a>
+                        </li>
+                    </ul>
+                </div>
+                <button class="btn btn-dark ml-auto" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+            </div>
+        </nav>
+        <div class="py-5 w-25 mx-auto">
+            <h1 style="color: black;">MFU Reservation System</h1>
+        </div>
+    </div>
+
+    <!-- contents -->
+    <!-- how to reserve -->
+    <div class="text-center pt-5">
+        <h1>How to Reserve</h1>
+        <div class="container pt-4">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="/public/img/mfu1.jpg" class="card-img-top" alt="Image 1">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">See & Choose the Room list</h5>
+                            <p class="card-text">Click the room list and choose</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="/public/img/mfu2.jpg" class="card-img-top" alt="Image 2">
+                        <div class= "card-body text-center">
+                            <h5 class="card-title">Add Reserve Details</h5>
+                            <p class="card-text">Click room and Add the reserve detail</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="/public/img/mfu3.jpg" class="card-img-top" alt="Image 3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Check status of your room</h5>
+                            <p class="card-text">Click status to check</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- About Us -->
+    <div class="text-center pt-5">
+        <h1>About Us</h1>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center py-5 mb-5">
+            <div class="col-md-6">
+                <div class="card">
+                    <img src="/public/img/head.png" class="card-img-top" alt="About Us Image">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Our Story</h5>
+                        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+                            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <!-- Footer Section -->
+    <footer class="bg-dark text-light text-center py-3">
+        <div class="container">
+            <p>&copy; 2023 ResearchRoom. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const passwordFields = document.querySelectorAll(".password-field");
+        const passwordToggleButtons = document.querySelectorAll(".password-toggle");
+
+        passwordToggleButtons.forEach((button, index) => {
+            button.addEventListener("click", function () {
+                const passwordField = passwordFields[index];
+                if (passwordField.type === "password") {
+                    passwordField.type = "text";
+                    button.innerHTML = '<i class="fas fa-eye"></i>';
+                } else {
+                    passwordField.type = "password";
+                    button.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                }
+            });
+        });
+    </script>
+
+    <!-- Use DB  -->
+    <<script>
+        // register submit
+        const formInput = document.querySelector('#formReg');
+        formInput.onsubmit = async function (e) {
+        // not refresh from
+        e.preventDefault();
+        // set data
+        const data = {
+        "name": formInput.elements['name'].value,
+        "username": formInput.elements['RegUsername'].value,
+        "password": formInput.elements['RegPassword'].value,
+        "student_id": formInput.elements['studentID'].value
+        }
+        // set method
+        const options = {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+        }
+        // add data
+        try {
+        if (formInput.elements['RegPassword'].value != formInput.elements['ConfirmPassword'].value) {
+            throw Error("Password Mismatch")
+        }else{
+            const response = await fetch('/register', options);
+            if (response.ok) {
+            const data = await response.text();
+            formInput.reset();
+            Swal.fire({
+                        title: "Register Success",
+                        icon: "success",
+                        confirmButtonColor: "#3085d6",
+                        confirmButtonText: "OK!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.replace(data);
+                        }
+                    });
+        } else if(response.status == 401){
+            const data = await response.text();
+        throw Error(data);
+        }
+        else {
+        const data = await response.text();
+        throw Error(data);
+        }
+        }
+        } catch (err) {
+        console.error(err.message);
+        Notiflix.Report.failure('Error', err.message, 'Close');
+        }
+
+
+        }
+        </script>
+        <!-- Login Submit  -->
+        <script>
+            const formLogin = document.querySelector('#formLogin');
+            formLogin.onsubmit = async function (e) {
+                e.preventDefault();
+                const username = formLogin['txtUsername'].value;
+                const password = formLogin['txtPassword'].value;
+                try {
+                    const options = {
+                        method: 'POST',
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ "username": username, "password": password }),
+                    };
+                    const response = await fetch('/login', options);
+                    if (response.ok) {
+                        const data = await response.text();
+                        // alert(data);
+                        window.location.replace(data);
+                    }
+                    else if (response.status == 401) {
+                        const data = await response.text();
+                        throw Error(data);
+                    }
+                    else {
+                        throw Error('Connection error');
+                    }
+                } catch (err) {
+                    console.error(err.message);
+                    // alert(err.message);
+                    Notiflix.Report.failure('Error', err.message, 'Close');
+                }
+            }
+        </script>
+
+<script>
+        document.querySelector("#forgotPasswordLink").onclick = function () {
+            Swal.fire({
+                icon: 'info',
+                title: 'Forgot your password?',
+                text: 'Contact Us ************',
+            });
+        };
+</script>
+</body>
+
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation Room</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+    <!-- in page css -->
+    <link rel="stylesheet" href="/public/css/navbar_css.css">
+
+</head>
+
+<body>
+    <div class="content-wrapper">
+        <!-- Describe Modal -->
+        <div class="modal fade" id="DesModal" tabindex="-1" aria-labelledby="DesModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div>
+                            <h5 class="modal-title text-center" id="DesModalLabel">Reason</h5>
+                        </div>
+
+                        <form id="formDes" data-bs-method="put">
+                            <div class="form-floating mb-3 mt-2">
+                                <p id="bookingId"></p>
+                                    <input type="text" class="form-control" id="Description"
+                                placeholder="Enter Reason" required>
+                            <label for="Description">Enter reason</label>
+                            </div>
+                            <div class="container text-center mt-3">
+                                <button type="submit" id="DesBtn" class="btn btn-dark"
+                                    onclick="Disapprove()">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Header with Text Overlay -->
+        <div class="text-center"
+            style="position: relative; background-image: url('/public/img/head.png'); height: 18rem; background-position: center;">
+            <!-- Navigation Bar -->
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <div class="container">
+                    <a class="navbar-brand" href="#"><b>RESERVATION ROOM</b></a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link fs-5 fw-bold" href="/homepage_lecturer">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fs-5 fw-bold" href="/history_lecturer">History</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fs-5 fw-bold" href="/dashboard_lecturer">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fs-5 fw-bold" href="/request_lecturer">Request</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <p class="px-5 fw-bold" id="userInfo">WELCOME</p>
+                    <a class="btn btn-danger ml-auto" href="/logout">LOG OUT</a>
+                </div>
+            </nav>
+            <div class="py-5 w-25 mx-auto">
+                <h1 style="color: black;">Request</h1>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div class="container mt-5">
+
+            <div class="mt-4 d-flex justify-content-center">
+                <a href="/dashboard_lecturer" class="btn btn-outline-dark mx-2">Dashboard</a>
+                <a href="/history_lecturer" class="btn btn-outline-dark mx-2">History</a>
+                <a href="/request_lecturer" class="btn btn-dark mx-2">Request</a>
+            </div>
+            <br>
+
+            <div class="col ">
+
+                <table class="table table-striped">
+                    <thead class="table-active">
+                        <tr>
+                            <th class="text-center">Reserved Build</th>
+                            <th class="text-center">Reserved Room</th>
+                            <th class="text-center">Reserved Date</th>
+                            <th class="text-center">Reserved Time</th>
+                            <th class="text-center">Booker's name</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Action</th> 
+                        </tr>
+                    </thead>
+                    <tbody id="tbldata"></tbody>
+
+                </table>
+
+            </div>
+
+            <!-- Pagination -->
+            <nav class="mt-4 d-flex justify-content-center ">
+                <ul class="pagination" id="pagination">
+                    <!-- Pagination links will be dynamically added here based on the total number of pages -->
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <!-- Footer Section -->
+    <footer class="bg-dark text-light text-center py-3 ">
+        <div class="container">
+            <p>&copy; 2023 ResearchRoom. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <script>
+        const tbldata = document.querySelector('#tbldata');
+        roomdata();
+        async function roomdata() {
+            try {
+                const response = await fetch("/room_request");
+
+                if (response.ok) {
+                    const data = await response.json();
+                    let rows = '';
+                    data.forEach(function (p) {
+                        if (p.status == 2) {
+
+                            rows += `<td class="text-center">${p.build}</td>`;
+                            rows += `<td class="text-center">${p.roomname}</td>`;
+                            rows += `<td class="text-center">${p.date}</td>`;
+                            rows += `<td class="text-center">${p.time}</td>`;
+                            rows += `<td class="text-center">${p.name}</td>`;
+                            rows += `<td class="text-center bg-primary fw-bold">Pending</td>`;
+                            rows += `<td class="text-center"><button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#DesModal" onclick="setContent(${p.booking_id})">Disapprove</button>`
+                            rows += `<button type="button" class="btn btn-success mx-3" onclick="Approve(${p.booking_id})">Approve</button></td></tr>`
+                        }
+                    });
+                    tbldata.innerHTML = rows;
+                } else if (response.status == 500) {
+                    const data = await response.text();
+                    throw Error(data);
+                }
+                else {
+                    throw Error('Connection error');
+                }
+            }
+            catch (err) {
+                console.error(err);
+            }
+        }
+
+
+        //MAKE DATA TO MODAL
+        function setContent(content) {
+            document.getElementById('bookingId').dataset.value = content;
+        }
+
+        //Disapprove
+        async function Disapprove() {
+            var bookingId = document.getElementById('bookingId').dataset.value;
+            var description = document.getElementById('Description').value;
+
+            try {
+                const options = {
+                    method: 'PUT',
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ "bookingId": bookingId, "description": description, "status": 0 }),
+                };
+                const response = await fetch('/approve_disapprove', options);
+                if (response.ok) {
+                    const data = await response.text();
+                    // alert(data);
+                    console.log(data);
+                }
+                else if (response.status == 401) {
+                    const data = await response.text();
+                    throw Error(data);
+                }
+                else {
+                    throw Error('Connection error');
+                }
+            } catch (err) {
+                console.error(err.message);
+                // alert(err.message);
+                Notiflix.Report.failure('Error', err.message, 'Close');
+            }
+        }
+
+        //Approve
+        async function Approve(bookingId) {
+            try {
+                const options = {
+                    method: 'PUT',
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ "bookingId": bookingId, "description": "", "status": 1 }),
+                };
+                const response = await fetch('/approve_disapprove', options);
+                if (response.ok) {
+                    const data = await response.text();
+                    // alert(data);
+                    console.log(data);
+                    location.reload();
+                }
+                else if (response.status == 401) {
+                    const data = await response.text();
+                    throw Error(data);
+                }
+                else {
+                    throw Error('Connection error');
+                }
+            } catch (err) {
+                console.error(err.message);
+                // alert(err.message);
+                Notiflix.Report.failure('Error', err.message, 'Close');
+            }
+
+        }
+
+    </script>
+
+    <!-- Show username -->
+    <script src="/public/js/showUser.js"></script>
+</body>
+
+</html>

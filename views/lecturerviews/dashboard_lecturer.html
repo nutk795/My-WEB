@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation Room</title>
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+    <!-- in page css -->
+    <link rel="stylesheet" href="/public/css/navbar_css.css">
+
+</head>
+
+<body>
+    <div class="content-wrapper">
+        <!-- Image Header with Text Overlay -->
+        <div class="text-center"
+            style="position: relative; background-image: url('/public/img/head.png'); height: 18rem; background-position: center;">
+            <!-- Navigation Bar -->
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <div class="container">
+                    <a class="navbar-brand" href="#"><b>RESERVATION ROOM</b></a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link fs-5 fw-bold" href="/homepage_lecturer">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fs-5 fw-bold" href="/history_lecturer">History</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fs-5 fw-bold" href="/dashboard_lecturer">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fs-5 fw-bold" href="/request_lecturer">Request</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <p class="px-5 fw-bold" id="userInfo">WELCOME</p>
+                    <a class="btn btn-danger ml-auto" href="/logout">LOG OUT</a>
+                </div>
+            </nav>
+            <div class="py-5 w-25 mx-auto">
+                <h1 style="color: black;">Room Dashboard</h1>
+            </div>
+        </div>
+
+
+        <!-- Dashboard Section -->
+        <div class="container mt-5">
+
+            <div class="container mt-5">
+                <div class="mt-4 d-flex justify-content-center">
+                    <a href="/dashboard_lecturer" class="btn btn-dark mx-2">Dashboard</a>
+
+                    <a href="/history_lecturer" class="btn btn-outline-dark mx-2">History</a>
+                    <a href="/request_lecturer" class="btn btn-outline-dark mx-2">Request</a>
+
+                </div>
+            </div>
+
+            <!-- Room Dashboard -->
+            <div class="mt-5">
+                <div class="mb-3">
+                    <label for="building" class="form-label te">Building:</label>
+                    <select class="form-select text-center" id="buildingSelect" onchange="updateRoomLists()">
+                        <option>Select Building</option>
+                    </select>
+                </div>
+
+                <div id="roomSections" style="display: none;">
+                    <div class="row">
+                        <div class="col-4 text-center">
+                            <p><span class="badge bg-danger">Reserved Room</span></p>
+                            <ul class="list-group" id="reservedRoomsList">
+                                <!-- รายการห้องจอง -->
+                            </ul>
+                        </div>
+                        <div class="col-4 text-center">
+                            <p><span class="badge bg-success">Available Room</span></p>
+                            <ul class="list-group" id="availableRoomsList">
+                                <!-- รายการห้องว่าง -->
+                            </ul>
+                        </div>
+                        <div class="col-4 text-center">
+                            <p><span class="badge bg-secondary">Disabled Room</span></p>
+                            <ul class="list-group" id="disabledRoomsList">
+                                <!-- รายการห้องไม่ใช้งาน -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <nav class="mt-4 d-flex justify-content-center ">
+            <ul class="pagination" id="pagination">
+                <!-- Pagination links will be dynamically added here -->
+            </ul>
+        </nav>
+
+    </div>
+    </div>
+    <!-- Footer Section -->
+    <footer class="bg-dark text-light text-center py-3">
+        <div class="container">
+            <p>&copy; 2023 ResearchRoom. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap 5 JS, Popper.js, and jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+
+    <!-- JavaScript for room status toggle and pagination -->
+    <script>
+
+        var tomorrowDate = new Date();
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate() + 1).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchAndPopulateBuildings();
+            updateRoomLists();
+        });
+
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        function fetchAndPopulateBuildings() {
+            fetch('/roomlist')
+                .then(response => response.json())
+                .then(data => {
+                    const buildings = [...new Set(data.map(room => room.build))];
+                    const selectElement = document.getElementById('buildingSelect');
+                    buildings.forEach(building => {
+                        const option = document.createElement('option');
+                        option.value = building;
+                        option.textContent = building;
+                        selectElement.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching building data:', error));
+        }
+
+        function updateRoomLists() {
+            const selectedBuilding = document.getElementById('buildingSelect').value;
+            const roomSections = document.getElementById('roomSections');
+
+            if (selectedBuilding !== "Select Building") {
+                roomSections.style.display = 'block';
+
+                // Fetch and display room data
+                fetch('/roomlist')
+                    .then(response => response.json())
+                    .then(data => {
+                        const filteredRooms = data.filter(room => room.build === selectedBuilding);
+
+
+                        const reservedRooms = filteredRooms.filter(room => {
+                            let x = false;
+                            if (room.roomStatus === 1) {
+                                for (let i = 0; i < room.date.length; i++) {
+                                    if (room.date[i] == formatDate(tomorrowDate) && room.status[i] != 0) {
+                                        x = true;
+                                        break;
+                                    }
+                                }
+                                return x;
+                            } 
+                        });
+                        
+                        const availableRooms = filteredRooms.filter(room => {
+                            let x = true;
+                            if (room.roomStatus === 1) {
+                                    for (let i = 0; i < room.date.length; i++) {
+                                        if(room.date[i] != formatDate(tomorrowDate)){
+                                            x = true;
+                                            break;
+                                        }
+                                        else if (room.date[i] == formatDate(tomorrowDate) && room.status[i] === 1 || 2) {
+                                            x = false;
+                                            break;
+                                        }
+                                    } return x;
+                            }
+                        });
+                        const disabledRooms = filteredRooms.filter(room => room.roomStatus === 0);
+
+                        displayRooms('#reservedRoomsList', reservedRooms, currentPage, itemsPerPage);
+                        displayRooms('#availableRoomsList', availableRooms, currentPage, itemsPerPage);
+                        displayRooms('#disabledRoomsList', disabledRooms, currentPage, itemsPerPage);
+
+                        updatePaginationLinks(reservedRooms.length + availableRooms.length + disabledRooms.length);
+                    })
+                    .catch(error => console.error('Fetch error:', error));
+            } else {
+                roomSections.style.display = 'none';
+            }
+        }
+        function displayRooms(listSelector, rooms, currentPage, itemsPerPage) {
+            const listElement = document.querySelector(listSelector);
+            listElement.innerHTML = '';
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedRooms = rooms.slice(startIndex, endIndex);
+
+            paginatedRooms.forEach(room => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('list-group-item');
+                listItem.textContent = room.roomname;
+                listElement.appendChild(listItem);
+            });
+        }
+
+        function updatePaginationLinks(totalItems) {
+            const paginationElement = document.getElementById('pagination');
+            paginationElement.innerHTML = '';
+
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+            for (let page = 1; page <= totalPages; page++) {
+                const pageLink = document.createElement('li');
+                pageLink.className = 'page-item';
+                pageLink.innerHTML = `<a class="page-link" href="#">${page}</a>`;
+
+                if (page === currentPage) {
+                    pageLink.classList.add('active');
+                }
+
+                pageLink.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    currentPage = page;
+                    updateRoomLists();
+                });
+
+                paginationElement.appendChild(pageLink);
+            }
+        }
+
+        document.getElementById('buildingSelect').addEventListener('change', function () {
+            currentPage = 1;
+            updateRoomLists();
+        });
+
+    </script>
+    <!-- Show username -->
+    <script src="/public/js/showUser.js"></script>
+</body>
+
+</html>

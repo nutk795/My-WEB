@@ -1,0 +1,80 @@
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+}
+
+.navbar {
+    background-color: transparent !important;
+    /* Remove background color */
+
+}
+
+.navbar {
+    background-color: transparent !important;
+    /* Remove background color */
+    /* This will fix the navbar to the top */
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    /* This will ensure the navbar stays on top of other elements */
+}
+
+.detail-button {
+    font-size: 12px;
+    padding: 2px 4px;
+}
+
+/* Adjust text and icon colors */
+.navbar-light .navbar-nav .nav-link {
+    color: black;
+    /* Text color */
+}
+
+
+.navbar-light .navbar-toggler:focus {
+    box-shadow: none;
+}
+
+.w3-tag {
+    height: 15px;
+    width: 15px;
+    padding: 0;
+    margin-top: 6px
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.content-wrapper {
+    min-height: 100%;
+    /* Equal to footer height */
+    margin-bottom: -50px; 
+}
+
+.content-wrapper:after {
+    content: "";
+    display: block;
+}
+
+footer, .content-wrapper:after {
+    height: 60px; /* Footer height */
+}
+
+footer {
+    background-color: black; /* or your preferred color */
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: relative;
+    text-align: center;
+}
+
+.form-select-short {
+    width: 150px; /* ปรับความกว้างตามที่คุณต้องการ */
+}
